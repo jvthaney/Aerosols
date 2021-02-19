@@ -1,0 +1,254 @@
+#######################################################
+########### Aerosol pole comparison 2016 ##############
+#######################################################
+bothaero<-read.table("bothaero.txt",header=TRUE)
+
+bothaerosum<-
+  summarise(group_by(bothaero,Site,Rep,Type),
+            Mean=mean(count,na.rm=TRUE),
+            sd=sd(count,na.rm=TRUE))
+
+bothaerosum$Rep<-as.factor(bothaerosum$Rep)
+
+pd <- position_dodge(width = 0.4)
+
+
+############################################
+###### Sumarise cells per liter air ########
+############################################
+bothaerosum3<-
+  summarise(group_by(bothaero,Site,Location,Type,Pump,Day),
+            Mean3=mean(cells.liter1,na.rm=TRUE),
+            sd3=sd(cells.liter1,na.rm=TRUE))
+
+bothaerosum3$Pump<-as.factor(bothaerosum3$Pump)
+levels(bothaerosum3$Type)<-c("Soil","Water")
+
+
+bothaerosum3
+
+
+###################################
+### Only Greenland ################
+###################################
+GR<-subset(bothaero,Location=="Greenland")
+
+GRsum<-
+  summarise(group_by(GR,Site,Type,Pump,Day),
+            MeanG=mean(cells.liter1,na.rm=TRUE),
+            sdG=sd(cells.liter1,na.rm=TRUE))
+GRsum
+GRsum$Pump<-as.factor(GRsum$Pump)
+levels(GRsum$Type)<-c("Soil","Water")
+
+### Pump color, Soil vs. Water ###
+ggplot(GRsum,aes(Type,MeanG, color=Pump))+
+  theme_classic()+geom_point(size=5,position=pd)+
+  geom_errorbar(aes(ymax=MeanG + sdG,ymin=MeanG - sdG),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=26),axis.text.x=element_text(size=24),
+        axis.text.y=element_text(size=22),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_brewer(palette = "Set2")+scale_y_continuous(lim=c(0,.4))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_wrap(~Site,ncol=3)
+
+
+
+###################################
+### Only Day 1 data ###############
+###################################
+bothaerod1<-subset(bothaerosum3,Day=="Day1")
+
+
+ggplot(bothaerod1,aes(Type,Mean3,color=Pump))+
+  theme_bw()+geom_point(size=5,position=pd)+
+  geom_errorbar(aes(ymax=Mean3 + sd3,ymin=Mean3 - sd3),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=26),axis.text.x=element_text(size=24),
+        axis.text.y=element_text(size=22),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_brewer(palette = "Set2")+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_wrap(~Site,ncol=3)
+
+### Just Antarctica ###
+Antd1<-subset(bothaerod1,Location=="Antarctica")
+
+ggplot(Antd1,aes(Type,Mean3,color=Pump))+
+  theme_bw()+geom_point(size=5,position=pd)+
+  geom_errorbar(aes(ymax=Mean3 + sd3,ymin=abs(Mean3 - sd3)),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=26),axis.text.x=element_text(size=24),
+        axis.text.y=element_text(size=22),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_brewer(palette = "Set2")+
+  scale_y_continuous(lim=c(0,.4))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_wrap(~Site,ncol=3)
+
+### Just Greenland ###
+GRd1<-subset(bothaerod1,Location=="Greenland")
+
+ggplot(GRd1,aes(Type,Mean3,color=Pump))+
+  theme_bw()+geom_point(size=5,position=pd)+
+  geom_errorbar(aes(ymax=Mean3 + sd3,ymin=abs(Mean3 - sd3)),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=26),axis.text.x=element_text(size=24),
+        axis.text.y=element_text(size=22),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_brewer(palette = "Set2")+
+  scale_y_continuous(lim=c(0,.4))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_wrap(~Site,ncol=3)
+
+
+
+###################################
+### Cell-filter Spatial Plot ###
+###################################
+
+### Antarctica ###
+ggplot(antaero,aes(Position.X,Position.Y, color=count))+
+  theme_bw()+geom_point(size=5,position=pd)+
+  theme(axis.title=element_text(size=14),axis.text.x=element_text(size=12),
+        axis.text.y=element_text(size=12),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_distiller(palette="RdPu",direction=1)+
+  labs(x="X coordinates",y="Y coordinates")+
+  facet_grid(Site~Pump)
+
+### Greenland ###
+ggplot(GR,aes(Position.X,Position.Y, color=count))+
+  theme_bw()+geom_point(size=5,position=pd)+
+  theme(axis.title=element_text(size=14),axis.text.x=element_text(size=12),
+        axis.text.y=element_text(size=12),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_distiller(palette="RdPu",direction=1)+
+  labs(x="X coordinates",y="Y coordinates")+
+  facet_grid(Site~Pump)
+
+
+######################################################################
+############# Comparison Figures #####################################
+######################################################################
+
+library("colorspace")
+
+###################################
+######### DAY 1 only ##############
+###################################
+bothd1sum<-
+  summarise(group_by(bothaerod1,Site,Location,Type,Day),
+            Mean=mean(Mean3,na.rm=TRUE),
+            Sd=sd(Mean3,na.rm=TRUE))
+
+### Cells by sites within locations - points ###
+ggplot(bothd1sum,aes(Type,Mean,color=Site,shape=Site))+
+  theme_classic()+geom_point(size=6,position=pd)+
+  geom_errorbar(aes(ymax=Mean + Sd,ymin=Mean - Sd),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=25),
+        axis.text.x=element_text(size=22),
+        axis.text.y=element_text(size=20,margin = margin(l=10)),
+        legend.text=element_text(size=24),
+        legend.title=element_text(size=25),
+        strip.text=element_text(size=24))+
+  scale_color_manual(values=c("olivedrab3","olivedrab3","olivedrab3",
+                              "maroon","maroon","maroon"))+
+  scale_shape_manual(values=c(17,18,19,17,18,19))+
+  scale_y_continuous(lim=c(0,.2))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_grid(bothd1sum$Location)+
+  stat_summary(fun.y=median, colour='black', geom='point', shape='-', size=20)
+  
+
+## Add manual colors per site:
+##scale_color_manual(values=c("darkgreen","seagreen2","turquoise4","navajowhite2","lightsalmon2","saddlebrown"))+
+## Add grid lines:
+# panel.grid.major.y = element_line(colour="black", size = (.5),linetype="dotted")
+
+### Cells by sites within locations - BARS ###
+ggplot(bothd1sum,aes(Type,Mean,fill=Site))+
+  theme_classic()+geom_bar(stat="identity",color="black",position = position_dodge())+
+  geom_errorbar(aes(ymax=Mean + Sd,ymin=Mean - Sd),width=0.05,position=position_dodge(.9))+
+  theme(axis.title=element_text(size=25),
+        axis.text.x=element_text(size=22),
+        axis.text.y=element_text(size=20,margin = margin(l=10)),
+        legend.text=element_text(size=24),
+        legend.title=element_text(size=25),
+        strip.text=element_text(size=24))+
+  scale_fill_manual(values=c("yellow3","olivedrab3","darkgreen","lightpink1","violetred2","violetred4"))+
+  scale_y_continuous(lim=c(0,.2))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_grid(bothd1sum$Location)
+
+### Cells by sites within locations - BARS ###
+ggplot(bothd1sum,aes(Type,Mean,fill=Site))+
+  theme_classic()+geom_bar(stat="identity",color="black",position = position_dodge(),
+                           density=c(5,10,20,30,40,60))+
+  geom_errorbar(aes(ymax=Mean + Sd,ymin=Mean - Sd),width=0.05,position=position_dodge(.9))+
+  theme(axis.title=element_text(size=25),
+        axis.text.x=element_text(size=22),
+        axis.text.y=element_text(size=20,margin = margin(l=10)),
+        legend.text=element_text(size=24),
+        legend.title=element_text(size=25),
+        strip.text=element_text(size=24))+
+  scale_fill_manual(values=c("yellow3","olivedrab3","darkgreen","lightpink1","violetred2","violetred4"))+
+  scale_y_continuous(lim=c(0,.2))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_grid(bothd1sum$Location)
+
+
+### Location only ######
+
+pd <- position_dodge(width = 0.5)
+
+aeropoles1<-
+  ggplot(bothd1sum,aes(Type,Mean,color=Location,shape=Location))+
+  theme_classic()+geom_point(size=6,position=pd)+
+  geom_errorbar(aes(ymax=Mean + Sd,ymin=Mean - Sd),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=25),
+        axis.text.x=element_text(size=22),
+        axis.text.y=element_text(size=20,margin = margin(l=10)),
+        legend.text=element_text(size=24),
+        legend.title=element_text(size=25),
+        strip.text=element_text(size=24),
+        panel.grid.major.y = element_line(colour="black", size = (.5),linetype="dotted"))+
+  scale_color_manual(values=c("lightskyblue","olivedrab"))+
+  scale_y_continuous(lim=c(0,.2))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  stat_summary(fun.y=median, mapping=aes(group=Location),colour='black', geom='point', shape='-', size=25,position=pd)
+
+ggsave("aeropoles1.pdf",width=14,height=9,dpi=600)
+ggsave("aeropoles1.tiff",width=14,height=9,dpi=500)
+  
+  
+summarise(group_by(bothd1sum,Location,Type),
+          Median=median(Mean,na.rm=TRUE))
+
+summarise(group_by(bothd1sum,Location,Type,Site),
+          Mean=mean(Mean,na.rm=TRUE),
+          Sd=sd(Mean,na.rm=TRUE),Median=median(Mean,na.rm=TRUE))
+
+### Condensed into ave per Location ###
+bothd1sum2<-
+  summarise(group_by(bothd1sum,Location,Type),
+            MeanS2=mean(Mean,na.rm=TRUE),
+            SdS2=sd(Mean,na.rm=TRUE))
+
+###################################
+######### Both days ###############
+###################################
+
+## Using bothsumaerosum3
+
+### Location shape, color Sites ###
+ggplot(bothaerosum3,aes(Type,Mean3,color=Site,shape=Location))+
+  theme_classic()+geom_point(size=6,position=pd)+
+  geom_errorbar(aes(ymax=Mean3 + sd3,ymin=Mean3 - sd3),width=0.05,position=pd)+
+  theme(axis.title=element_text(size=26),axis.text.x=element_text(size=24),
+        axis.text.y=element_text(size=22),legend.text=element_text(size=24),
+        legend.title=element_text(size=25),strip.text=element_text(size=24))+
+  scale_color_manual(values=c("darkgreen","seagreen2","turquoise4",
+                              "navajowhite2","lightsalmon2","saddlebrown"))+
+  scale_y_continuous(lim=c(0,.2))+
+  labs(x="",y=expression(paste("Cells per liter air")))+
+  facet_wrap(bothaerosum3$Day)
+  
+
