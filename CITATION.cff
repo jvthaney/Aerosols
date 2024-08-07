@@ -10,7 +10,7 @@ authors:
 version:
 date-released: "2020"
 identifiers:
-  - description: These are accompanying raw data for this paper
+  - description: R code accompanying this paper
     type: doi
     value: "10.1111/1758-2229.12832"
 license: 
