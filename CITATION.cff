@@ -1,0 +1,17 @@
+cff-version: 
+message: If you use these data, please cite it using these metadata.
+title: Picocyanobacterial cells in near-surface air above terrestrial and freshwater substrates in Greenland and Antarctica: Aerosolization of picocyanobacterial cells
+abstract: Bioaerosols are an important component of the total atmospheric aerosol load, with implications for human health, climate feedbacks and the distribution and dispersal of microbial taxa. Bioaerosols are sou- rced from marine, freshwater and terrestrial surfaces, with different mechanisms potentially responsible for releasing biological particles from these substrates. Little is known about the production of freshwater and terrestrial bioaerosols in polar regions. We used portable collection devices to test for the presence of picocyanobacterial aerosols above freshwater and soil substrates in the southwestern Greenland tundra and the McMurdo Dry Valleys of Antarctica. We show that picocyanobacterial cells are present in the near- surface air at concentrations ranging from 2,431 to 28,355 cells m−3 of air, with no significant differences among substrates or between polar regions. Our con- centrations are lower than those measured using the same methods in temperate ecosystems. We suggest that aerosolization is an important process linking terrestrial and aquatic ecosystems in these polar environments, and that future work is needed to explore aerosolization mechanisms and taxon- specific aerosolization rates. Our study is a first step toward understanding the production of bioaerosols in extreme environments dominated by microbial life.
+authors:
+  - family-names: Trout-Haney, Heindel, Virginia
+    given-names: Jessica V., Ruth C., Ross A.
+    orcid: "0000-0001-5060-8629"
+  - name:
+version:
+date-released: "2020"
+identifiers:
+  - description: These are accompanying raw data for this paper
+    type: doi
+    value: "10.1111/1758-2229.12832"
+license: 
+repository-code: "https://github.com/citation-file-format/my-research-software"
